@@ -67,7 +67,16 @@ begin
           puts "#{opts.input} does not exist"
           next
         end
-        opts.input = File.expand_path(i)
+
+		# Don't expand paths for Windows
+		if input.match(/^[aA-zZ]\:$/)
+			opts.input = input
+		else
+			opts.input = File.expand_path(i)
+		end
+
+		
+		puts opts.input
         hb_input = HBConvertInput.new(opts.input)
         results = Handbrake::convert(opts, titleMatcher, audioMatcher, subtitleMatcher)
         inout << [hb_input, results]

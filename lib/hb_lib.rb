@@ -669,7 +669,14 @@ and copy the application-files to #{File::dirname(Handbrake::HANDBRAKE_CLI)}")
     end
   
     def self.readInfo(input, debug = false, testdata = nil, titles = nil)
-      path = File.expand_path(input)
+
+	# Don't expand paths for Windows
+	if input.match(/^[aA-zZ]\:$/)
+		path = input
+	else
+		path = File.expand_path(input)
+	end
+
 
       cmd = "\"#{HANDBRAKE_CLI}\" -i \"#{path}\" --scan --title #{titles.nil? || titles.size != 1 ? 0 : titles.first} 2>&1"
       if !testdata.nil? and File.exists?(testdata)
