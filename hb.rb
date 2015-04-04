@@ -42,6 +42,10 @@ inputs += options.argv if not options.argv.empty?
 begin
   inout = []
   current_loop = options.loops
+  
+  # Set up the sequence
+  $sequence = options.sequencestart
+  
   while current_loop != 0
     inputs.each do |input|
       #input = File.expand_path(input)
@@ -55,6 +59,7 @@ begin
       else
         i_list = [input]
       end
+	  
       i_list.each do |i|
         opts = options.dup
         unless Tools::FileTool::wait_for(i, options.inputWaitLoops, 2) { |loop, max, age|

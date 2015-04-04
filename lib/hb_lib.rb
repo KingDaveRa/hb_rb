@@ -41,7 +41,7 @@ module HandbrakeCLI
                   :onlyFirstTrackPerLanguage, :skipCommentaries,
                   :checkOnly, :xtra_args, :debug, :verbose,
                   :x264profile, :x264preset, :x264tune,
-                  :testdata, :preview, :inputWaitLoops, :loops,
+                  :testdata, :preview, :inputWaitLoops, :loops, :sequencestart,
                   :logfile, :logOverride, :logOverview,
                   :inputDoneCommands, :outputDoneCommands,
                   :passedThroughArguments, :enableDecomb, :enableDetelecine, :looseAnamorphic,
@@ -53,6 +53,7 @@ module HandbrakeCLI
       @burninForced = false
       @inputWaitLoops = -1
       @loops = 1
+	  @sequencestart = 1
       @force = false
       @ipodCompatibility = false
       @enableAutocrop = false
@@ -210,6 +211,7 @@ module HandbrakeCLI
         output_help = ["output-file (mp4, m4v and mkv supported)"]
         output_help << "available place-holders"
         output_help << "#pos#               - title-number on input-source"
+		output_help << "#sequence#          - sequence number, starting from 1. Can be overridden"
         output_help << "#size#              - resolution"
         output_help << "#fps#               - frames per second"
         output_help << "#ts#                - current timestamp"
@@ -308,6 +310,7 @@ module HandbrakeCLI
         opts.separator("")
         opts.separator("expert-options")
         opts.on("--loops LOOPS", "processes input LOOPS times (default: 1)") { |arg| options.loops = arg.to_i }
+		opts.on("--sequencestart NUMBER", "start sequence at NUMBER") { |arg| options.sequencestart = arg.to_i }
         opts.on("--wait LOOPS", "retries LOOPS times to wait for input (default: unlimited)") { |arg| options.inputWaitLoops = arg.to_i }
         opts.on("--xtra ARGS", "additional arguments for handbrake") { |arg| options.xtra_args = arg }
         opts.on("--temp DIR", "use DIR as temp-directory") { |arg|
@@ -911,6 +914,7 @@ and copy the application-files to #{File::dirname(Handbrake::HANDBRAKE_CLI)}")
         source_dirname = File.expand_path(File.dirname(source.path))
         source_parentname = File.basename(source_dirname)
         outputFile.gsub!("#pos#", "%02d" % title.pos)
+		outputFile.gsub!("#sequence#", "%02d" % $sequence)
         outputFile.gsub!("#size#", title.size || "")
         outputFile.gsub!("#fps#", title.fps || "")
         outputFile.gsub!("#ts#", Time.new.strftime("%Y-%m-%d_%H_%M_%S"))
@@ -1231,7 +1235,7 @@ and copy the application-files to #{File::dirname(Handbrake::HANDBRAKE_CLI)}")
             HandbrakeCLI::logger.info "    - track #{s.pos}: #{s.descr}"
           end
         end
-  
+
         HandbrakeCLI::logger.info(command)
         if not options.testdata.nil?
           result.file = outputFile
@@ -1286,8 +1290,13 @@ and copy the application-files to #{File::dirname(Handbrake::HANDBRAKE_CLI)}")
         end
         end_time = Time.now
         required_time = Tools::TimeTool::secondsToTime((end_time - start_time).round)
+
+		# Increment sequence
+		$sequence += 1
+
         HandbrakeCLI::logger.info("== done (required time: #{required_time}) =================================")
         raise Interrupt if return_code == 130
+
       end
       unless created.empty?
         options.inputDoneCommands.each do |command|
