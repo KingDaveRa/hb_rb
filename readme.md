@@ -11,6 +11,12 @@ Main advantages of the script are:
 - recursive converting
 - works also with presets (plist and own presets)
 
+Information about this fork
+===========================
+
+I've made some changes to this script to make it work better on Windows. I've also tweaked it a bit to 
+make it work better with my (intended) workflow. All credit goes to the original author, I've simply
+hacked stuff about, so any errors introduced are mine.
 
 requirements
 ============
