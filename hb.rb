@@ -75,8 +75,6 @@ begin
 			opts.input = File.expand_path(i)
 		end
 
-		
-		puts opts.input
         hb_input = HBConvertInput.new(opts.input)
         results = Handbrake::convert(opts, titleMatcher, audioMatcher, subtitleMatcher)
         inout << [hb_input, results]
