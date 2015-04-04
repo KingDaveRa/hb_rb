@@ -1109,7 +1109,9 @@ and copy the application-files to #{File::dirname(Handbrake::HANDBRAKE_CLI)}")
               audio_settings_list << audio_settings
               HandbrakeCLI::logger.debug("adding audio-track: #{t}")
               first_audio_track = t if first_audio_track.nil?
-            end            
+			  # Quit out
+			  break
+			end            
           end
         end
         
