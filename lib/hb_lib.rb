@@ -1060,7 +1060,8 @@ and copy the application-files to #{File::dirname(Handbrake::HANDBRAKE_CLI)}")
             end
             HandbrakeCLI::logger.debug("adding audio-track: #{t}")
             first_audio_track = t if first_audio_track.nil?
-          else
+          # Search using search string
+		  else
             options.audioTrackSettings.each do |at|
               atc = at.dup
               if atc["encoder"].eql?("auto") and !options.audioEncoderSettings.nil?
@@ -1151,7 +1152,7 @@ and copy the application-files to #{File::dirname(Handbrake::HANDBRAKE_CLI)}")
           if ismp4
             command << " --audio-fallback faac"
           else
-            command << " --audio-fallback lame"
+            command << " --audio-fallback ac3"
           end
         end
 
