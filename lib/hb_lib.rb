@@ -927,6 +927,8 @@ and copy the application-files to #{File::dirname(Handbrake::HANDBRAKE_CLI)}")
         if not options.force
           if File.exists?(outputFile) or Dir.glob("#{File.dirname(outputFile)}/*.#{File.basename(outputFile)}").size() > 0
             HandbrakeCLI::logger.info("skipping title because \"#{outputFile}\" already exists")
+			# Increment sequence
+			$sequence += 1
             next
           end
         end
