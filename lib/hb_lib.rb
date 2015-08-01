@@ -1100,15 +1100,26 @@ and copy the application-files to #{File::dirname(Handbrake::HANDBRAKE_CLI)}")
               if atc["encoder"].eql?("copy")
                 audio_settings["mixdown"] = "auto"
                 audio_settings["ab"] = "auto"
-                audio_settings["name"] = "#{t.descr}"
+				# Override the description if set
+				if atc["name"] != nil
+					audio_settings["name"] = atc["name"] + "#{t.trackspec}"
+				else
+					audio_settings["name"] = "#{t.descr}"
+				end
               else
                 audio_settings["mixdown"] = atc["mixdown"]
                 audio_settings["ab"] = atc["bitrate"]
-                if atc["mixdown"].eql?("auto")
-                  audio_settings["name"] = "#{t.descr(true, false)}"
-                else
-                  audio_settings["name"] = "#{t.descr(true, true)} (#{AUDIO_MIXDOWN_DESCR[atc["mixdown"]] || atc["mixdown"]})"
-                end
+				
+				# Override description again if set. Otherwise build one.
+				if atc["name"] != nil
+					audio_settings["name"] = atc["name"] + "#{t.trackspec}"
+				else
+					if atc["mixdown"].eql?("auto")
+					  audio_settings["name"] = "#{t.descr(true, false)}"
+					else
+					  audio_settings["name"] = "#{t.descr(true, true)} (#{AUDIO_MIXDOWN_DESCR[atc["mixdown"]] || atc["mixdown"]})"
+					end
+				end
               end
               audio_settings["drc"] = "0.0"
               audio_settings_list << audio_settings
@@ -1372,6 +1383,10 @@ and copy the application-files to #{File::dirname(Handbrake::HANDBRAKE_CLI)}")
       d.strip!
       return d
     end
+	
+	def trackspec()
+	  return " " << "(#{codec})" << " " << "(#{channels})"
+	end
   
     def commentary?()
       return @descr.downcase().include?("commentary")
